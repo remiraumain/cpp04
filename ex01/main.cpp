@@ -6,7 +6,7 @@
 /*   By: rraumain <rraumain@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 21:36:52 by rraumain          #+#    #+#             */
-/*   Updated: 2025/09/22 23:00:07 by rraumain         ###   ########.fr       */
+/*   Updated: 2025/09/22 23:31:22 by rraumain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,28 +17,26 @@
 
 int main()
 {
-	std::cout << "\n==== Polymorphic destruction ====\n";
-    const Animal* j = new Dog();
-    const Animal* i = new Cat();
-    delete j;
-    delete i;
+    const std::size_t N = 4;
+    Animal* animals[N];
 
-	std::cout << "\n==== Copy ====\n";
-    Dog d1;
-	d1.getBrain().setIdea(0, "bone");
+    for (std::size_t i = 0; i < N; ++i) {
+        if (i < N / 2) animals[i] = new Dog();
+        else           animals[i] = new Cat();
+    }
 
-    Dog d2 = d1;
-    d1.getBrain().setIdea(0, "I don’t want to set the world on fire");
-    std::cout << "Dog d1 idea[0]: " << d1.getBrain().getIdea(0) << "\n";
-    std::cout << "Dog d2 idea[0]: " << d2.getBrain().getIdea(0) << " (expected: bone)\n";
+    Dog* d1 = static_cast<Dog*>(animals[0]);
+	Dog* d2 = static_cast<Dog*>(animals[1]);
+	d1->getBrain().setIdea(0, "bone");
+	d2->getBrain().setIdea(0, "pizza");
+	*d2 = *d1;
+	d1->getBrain().setIdea(0, "milk");
+	std::cout << "Dog 1: " << d1->getBrain().getIdea(0) << "\n";
+	std::cout << "Dog 2: " << d2->getBrain().getIdea(0) << " (expected: bone)\n";
 
-    Cat c1;
-    c1.getBrain().setIdea(1, "fish");
-    Cat c2;
-    c2 = c1;
-    c1.getBrain().setIdea(1, "milk");
-    std::cout << "Cat c1 idea[1]: " << c1.getBrain().getIdea(1) << "\n";
-    std::cout << "Cat c2 idea[1]: " << c2.getBrain().getIdea(1) << " (expected: fish)\n";
+    for (std::size_t i = 0; i < N; ++i) {
+        delete animals[i];
+    }
 
     return 0;
 }
